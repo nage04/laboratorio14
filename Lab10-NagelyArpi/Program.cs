@@ -1,6 +1,8 @@
 using Lab10_NagelyArpi.Configuration;
 using Lab10_NagelyArpi.Application.Configuration;
 using Lab10_NagelyArpi.Infrastructure.Configuration;
+using Lab10_NagelyArpi.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,4 +41,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TicketeraBdContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
 app.Run();
+
